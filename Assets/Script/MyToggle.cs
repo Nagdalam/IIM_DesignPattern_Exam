@@ -14,5 +14,10 @@ public class MyToggle : MonoBehaviour, ITouchable
     public void Touch(int power)
     {
         IsActive = !IsActive;
+        if (IsActive)
+            _onToggleOn.Invoke();
+        else
+            _onToggleOff.Invoke();
     }
+
 }

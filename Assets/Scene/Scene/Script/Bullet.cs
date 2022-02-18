@@ -9,6 +9,7 @@ public class Bullet : MonoBehaviour
     [SerializeField] Rigidbody2D _rb;
     [SerializeField] float _speed;
     [SerializeField] float _collisionCooldown = 0.5f;
+    [SerializeField] ImpactReference _impactHandler;
 
     public Vector3 Direction { get; private set; }
     public int Power { get; private set; }
@@ -37,10 +38,13 @@ public class Bullet : MonoBehaviour
         if (Time.fixedTime < LaunchTime + _collisionCooldown) return;
 
         var healthCollision = collision.GetComponent<IHealth>();
+        var touchableCollision = collision.GetComponent<ITouchable>();
+        touchableCollision?.Touch(Power);
         healthCollision?.TakeDamage(Power);
-        if (collision.GetComponent<IHealth>() != null || gameObject.CompareTag("Wall"))
+        if (collision.GetComponent<IHealth>() != null || gameObject.CompareTag("Wall") || touchableCollision != null)
         {
-            Destroy(gameObject);
+            _impactHandler.Instance.TriggerImpact(transform.position);
+            gameObject.SetActive(false);
         }
     }
     private void OnCollisionEnter2D(Collision2D collision)
@@ -48,10 +52,13 @@ public class Bullet : MonoBehaviour
         if (Time.fixedTime < LaunchTime + _collisionCooldown) return;
 
         var healthCollision = collision.collider.GetComponent<IHealth>();
+        var touchableCollision = collision.collider.GetComponent<ITouchable>();
         healthCollision?.TakeDamage(Power);
-        if (healthCollision != null || gameObject.CompareTag("Wall"))
+        touchableCollision?.Touch(Power);
+        if (healthCollision != null || gameObject.CompareTag("Wall") || touchableCollision!= null)
         {
-            Destroy(gameObject);
+            _impactHandler.Instance.TriggerImpact(transform.position);
+            gameObject.SetActive(false);
         }
     }
 

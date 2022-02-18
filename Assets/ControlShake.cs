@@ -9,7 +9,7 @@ public class ControlShake : MonoBehaviour
 {
     [SerializeField] CinemachineVirtualCamera _virtualCamera;
     [SerializeField] AnimationCurve _shakeCurve;
-
+    [SerializeField] ControlShakeReference _shakeRef;
     Coroutine ShakeRoutine { get; set; }
 
     [Button("TestShake")]
@@ -17,6 +17,11 @@ public class ControlShake : MonoBehaviour
     {
         if (Application.isPlaying == false) return;
         LaunchScreenShake();
+    }
+
+    private void Start()
+    {
+        (_shakeRef as IReferenceSetter<ControlShake>).SetInstance(this);
     }
 
     public void LaunchScreenShake()

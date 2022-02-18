@@ -9,7 +9,7 @@ using UnityEngine.TestTools;
 
 public class LinqChallenge
 {
-    Health CreateHealth(int maxHealth, int startHealth) 
+    Health CreateHealth(int maxHealth, int startHealth)
         => new GameObject("Health GameObject")
             .AddComponent<Health>()
             .SetField("_maxHealth", maxHealth)
@@ -26,6 +26,8 @@ public class LinqChallenge
         // Act
         IEnumerable<int> Act()
         {
+            IEnumerable<int> myNewCollection = values
+                .Where(i => i % 2 == 0);
             // Return la query linq ici
             throw new NotImplementedException();
         }
@@ -48,6 +50,9 @@ public class LinqChallenge
         // Act
         IEnumerable<int> Act()
         {
+            IEnumerable<int> myNewCollection = values
+                .Where(i => i % 2 == 0)
+                .Where(i => i < 1000);
             // Return la query linq ici
             throw new NotImplementedException();
         }
@@ -70,6 +75,8 @@ public class LinqChallenge
         // Act
         IEnumerable<int> Act()
         {
+            IEnumerable<int> myNewCollection = values
+                .Select(i => i *2);
             // Return la query linq ici
             throw new NotImplementedException();
         }
@@ -92,6 +99,9 @@ public class LinqChallenge
         // Act
         IEnumerable<int> Act()
         {
+            IEnumerable<int> myNewCollection = values
+                .Select(i => i * 3)
+                .Where(i => i % 2 == 0);
             // Return la query linq ici
             throw new NotImplementedException();
         }
@@ -113,6 +123,8 @@ public class LinqChallenge
         // Act
         IEnumerable<int> Act()
         {
+            IEnumerable<int> myNewCollection = values
+               .OrderBy(i => i);
             // Return la query linq ici
             throw new NotImplementedException();
         }
@@ -135,6 +147,9 @@ public class LinqChallenge
         // Act
         IEnumerable<bool> Act()
         {
+            IEnumerable<int> myNewCollection = values
+                .OrderBy(i => i)
+                .Where(i => i % 2 == 0);
             // Return la query linq ici
             throw new NotImplementedException();
         }
@@ -155,7 +170,7 @@ public class LinqChallenge
         List<int> values = new List<int>() { 12, 3, 90, 22, 42 };
 
         // Act
-        IEnumerable<(int,int)> Act()
+        IEnumerable<(int, int)> Act()
         {
             // Return la query linq ici
             throw new NotImplementedException();
@@ -163,11 +178,11 @@ public class LinqChallenge
         var queryResult = Act().ToList();
 
         // Assert 
-        Assert.True(queryResult[0] == (12,24));
-        Assert.True(queryResult[1] == (3,6));
+        Assert.True(queryResult[0] == (12, 24));
+        Assert.True(queryResult[1] == (3, 6));
         Assert.True(queryResult[2] == (90, 180));
-        Assert.True(queryResult[3] == (22,44));
-        Assert.True(queryResult[4] == (42,84));
+        Assert.True(queryResult[3] == (22, 44));
+        Assert.True(queryResult[4] == (42, 84));
     }
 
     [Test]
@@ -179,6 +194,7 @@ public class LinqChallenge
         // Act
         double Act()
         {
+
             // Return la query linq ici
             throw new NotImplementedException();
         }

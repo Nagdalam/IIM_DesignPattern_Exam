@@ -49,6 +49,7 @@ MonoBehaviour:
   _rb: {fileID: 7551320715217455284}
   _speed: 0.3
   _collisionCooldown: 0.1
+  _impactHandler: {fileID: 11400000, guid: 9810f145df5015d48ae43374c729febe, type: 2}
 --- !u!61 &721766070828420108
 BoxCollider2D:
   m_ObjectHideFlags: 0

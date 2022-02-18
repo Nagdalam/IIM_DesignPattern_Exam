@@ -15,9 +15,14 @@ public class Lifebar : MonoBehaviour
         _health.OnDamage += UpdateLifeBar;
         _health.OnHeal += UpdateLifeBar;
     }
+
+    private void OnDestroy()
+    {
+        _health.OnDamage -= UpdateLifeBar;
+        _health.OnHeal -= UpdateLifeBar;
+    }
     void UpdateLifeBar(int life)
     {
-        Debug.Log("Lifebar Updated" + life);
         healthSlider.value = healthSlider.value+life;
     }
 }

@@ -15,6 +15,7 @@ public class Health : MonoBehaviour, IHealth
     public UnityEvent _onHeal;
     [SerializeField] UnityEvent _onInvincible;
     bool _isInvincible;
+    [SerializeField] ControlShakeReference _shakeRef;
 
     // Propriétés
     public int CurrentHealth { get; private set; }
@@ -44,6 +45,7 @@ public class Health : MonoBehaviour, IHealth
         if (!_isInvincible) { 
         if (amount < 0) throw new ArgumentException($"Argument amount {nameof(amount)} is negativ");
 
+            _shakeRef.Instance.LaunchScreenShake();
         var tmp = CurrentHealth;
         CurrentHealth = Mathf.Max(0, CurrentHealth - amount);
         var delta = CurrentHealth - tmp;
@@ -60,7 +62,6 @@ public class Health : MonoBehaviour, IHealth
     {
         if (amount < 0) throw new ArgumentException($"Argument amount {nameof(amount)} is negativ");
         CurrentHealth += amount;
-        Debug.Log("Healed for" + amount);
         OnHeal.Invoke(amount);
         if (CurrentHealth < MaxHealth)
             CurrentHealth = MaxHealth;

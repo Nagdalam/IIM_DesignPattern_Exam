@@ -15,7 +15,7 @@ public class PickUpPotion : MonoBehaviour, IPickUp
         if (collision.gameObject.layer == _collLayer)
         {
             collision.GetComponentInParent<IHealth>()?.HealDamage(_healAmount);
-            Destroy(gameObject);
+            gameObject.SetActive(false);
         }
     }
 }
