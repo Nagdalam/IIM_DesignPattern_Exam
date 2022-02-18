@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 public class Health : MonoBehaviour, IHealth
 {
@@ -11,15 +12,21 @@ public class Health : MonoBehaviour, IHealth
     [SerializeField] int _startHealth;
     [SerializeField] int _maxHealth;
     [SerializeField] UnityEvent _onDeath;
+    public UnityEvent _onHeal;
+    [SerializeField] UnityEvent _onInvincible;
+    bool _isInvincible;
 
     // Propriétés
     public int CurrentHealth { get; private set; }
     public int MaxHealth => _maxHealth;
     public bool IsDead => CurrentHealth <= 0;
+    public bool IsInvincible => _isInvincible;
 
     // Events
     public event UnityAction OnSpawn;
     public event UnityAction<int> OnDamage;
+    public event UnityAction<int> OnHeal;
+    public event UnityAction<bool> OnInvincible;
     public event UnityAction OnDeath { add => _onDeath.AddListener(value); remove => _onDeath.RemoveListener(value); }
 
     // Methods
@@ -31,8 +38,10 @@ public class Health : MonoBehaviour, IHealth
         OnSpawn?.Invoke();
     }
 
+
     public void TakeDamage(int amount)
     {
+        if (!_isInvincible) { 
         if (amount < 0) throw new ArgumentException($"Argument amount {nameof(amount)} is negativ");
 
         var tmp = CurrentHealth;
@@ -44,7 +53,32 @@ public class Health : MonoBehaviour, IHealth
         {
             _onDeath?.Invoke();
         }
+        }
+    }
 
+    public void HealDamage(int amount)
+    {
+        if (amount < 0) throw new ArgumentException($"Argument amount {nameof(amount)} is negativ");
+        CurrentHealth += amount;
+        Debug.Log("Healed for" + amount);
+        OnHeal.Invoke(amount);
+        if (CurrentHealth < MaxHealth)
+            CurrentHealth = MaxHealth;
+    }
+
+    public void Die()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+
+    public void SetInvincibility(bool shouldTurnOn)
+    {
+        OnInvincible.Invoke(shouldTurnOn);
+    }
+    public void InvincibilityToggle(bool shouldTurnOn)
+    {
+        _isInvincible = shouldTurnOn;
     }
 
     [Button("test")]

@@ -26,7 +26,7 @@ public class Bullet : MonoBehaviour
     {
         _rb.MovePosition((transform.position + (Direction.normalized * _speed)));
     }
-    
+
     void LateUpdate()
     {
         transform.rotation = EntityRotation.AimPositionToZRotation(transform.position, transform.position + Direction);
@@ -36,15 +36,23 @@ public class Bullet : MonoBehaviour
     {
         if (Time.fixedTime < LaunchTime + _collisionCooldown) return;
 
-        collision.GetComponent<IHealth>()?.TakeDamage(Power);
-        Destroy(gameObject);
+        var healthCollision = collision.GetComponent<IHealth>();
+        healthCollision?.TakeDamage(Power);
+        if (collision.GetComponent<IHealth>() != null || gameObject.CompareTag("Wall"))
+        {
+            Destroy(gameObject);
+        }
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (Time.fixedTime < LaunchTime + _collisionCooldown) return;
 
-        collision.collider.GetComponent<IHealth>()?.TakeDamage(Power);
-        Destroy(gameObject);
+        var healthCollision = collision.collider.GetComponent<IHealth>();
+        healthCollision?.TakeDamage(Power);
+        if (healthCollision != null || gameObject.CompareTag("Wall"))
+        {
+            Destroy(gameObject);
+        }
     }
 
     private void Health_OnDamage(int arg0)

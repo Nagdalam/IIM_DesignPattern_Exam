@@ -7,15 +7,19 @@ using UnityEngine.InputSystem;
 public class PlayerInputDispatcher : MonoBehaviour
 {
     [SerializeField] Camera _mainCamera;
-
     [SerializeField] EntityMovement _movement;
     [SerializeField] EntityFire _fire;
+    [SerializeField] Health _health;
 
     [SerializeField] InputActionReference _pointerPosition;
     [SerializeField] InputActionReference _moveJoystick;
     [SerializeField] InputActionReference _fireButton;
+    [SerializeField] InputActionReference _blockButton;
+
+    bool isBlocking = false;
 
     Coroutine MovementTracking { get; set; }
+    Coroutine BlockTracking { get; set; }
 
     Vector3 ScreenPositionToWorldPosition(Camera c, Vector2 cursorPosition) => _mainCamera.ScreenToWorldPoint(cursorPosition);
 
@@ -23,7 +27,8 @@ public class PlayerInputDispatcher : MonoBehaviour
     {
         // binding
         _fireButton.action.started += FireInput;
-
+        _blockButton.action.started += BlockInput;
+        _blockButton.action.canceled += BlockInputCancelled;
         _moveJoystick.action.started += MoveInput;
         _moveJoystick.action.canceled += MoveInputCancel;
     }
@@ -31,7 +36,7 @@ public class PlayerInputDispatcher : MonoBehaviour
     private void OnDestroy()
     {
         _fireButton.action.started -= FireInput;
-
+        _blockButton.action.started -= BlockInput;
         _moveJoystick.action.started -= MoveInput;
         _moveJoystick.action.canceled -= MoveInputCancel;
     }
@@ -63,10 +68,37 @@ public class PlayerInputDispatcher : MonoBehaviour
     private void FireInput(InputAction.CallbackContext obj)
     {
         float fire = obj.ReadValue<float>();
-        if(fire==1)
+        if (fire == 1 && !isBlocking)
         {
             _fire.FireBullet(2);
         }
+    }
+
+    //Ces deux méthodes servent à gérer l'état activé/désactivé du bouclier
+    void BlockInput(InputAction.CallbackContext obj)
+    {
+        if (BlockTracking != null) return;
+
+        BlockTracking = StartCoroutine(BlockTrackingRoutine());
+        IEnumerator BlockTrackingRoutine()
+        {
+            while (true)
+            {
+                isBlocking = true;
+                _health.SetInvincibility(true);
+                yield return null;
+            }
+            yield break;
+        }
+    }
+
+    void BlockInputCancelled(InputAction.CallbackContext obj)
+    {
+        if (BlockTracking == null) return;
+        isBlocking = false;
+        _health.SetInvincibility(false);
+        StopCoroutine(BlockTracking);
+        BlockTracking = null;
     }
 
 }
